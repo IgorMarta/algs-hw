@@ -14,13 +14,9 @@ public class BoggleSolver
 
     public BoggleSolver(final String[] dictionary)
     {
-        for (final String word : dictionary)
-        {
-            if (word.length() > 2)
-            {
-                this.dictionary.put(word, word);
-            }
-        }
+        Arrays.stream(dictionary)
+            .filter(word -> word.length() > 2)
+            .forEach(word -> this.dictionary.put(word, word));
     }
 
     public Iterable<String> getAllValidWords(final BoggleBoard board)
