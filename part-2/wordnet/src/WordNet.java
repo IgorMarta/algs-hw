@@ -12,7 +12,6 @@ import java.util.Objects;
 
 public class WordNet
 {
-    private final Digraph digraph;
     private final SAP sap;
     private final Map<String, List<Integer>> nounToSynsetsMap = new HashMap<>();
     private final List<String> synsetIdList = new ArrayList<>();
@@ -20,18 +19,7 @@ public class WordNet
     public WordNet(final String synsets, final String hypernyms)
     {
         validateArgs(synsets, hypernyms);
-
-        digraph = new Digraph(readSynsets(synsets));
-
-        readHypernyms(hypernyms);
-
-        if (new DirectedCycle(digraph).hasCycle())
-        {
-            throw new IllegalArgumentException();
-        }
-
-        validateSingleRoot();
-        sap = new SAP(digraph);
+        sap = readWordNet(synsets, hypernyms);
     }
 
     public Iterable<String> nouns()
@@ -57,6 +45,16 @@ public class WordNet
         return synsetIdList.get(sap.ancestor(nounToSynsetsMap.get(nounA), nounToSynsetsMap.get(nounB)));
     }
 
+    private SAP readWordNet(final String synsets, final String hypernyms)
+    {
+        final Digraph digraph = readHypernyms(readSynsets(synsets), hypernyms);
+
+        validateAcyclic(digraph);
+        validateSingleRoot(digraph);
+
+        return new SAP(digraph);
+    }
+
     private int readSynsets(final String synsets)
     {
         final In synsetsIn = new In(synsets);
@@ -64,8 +62,7 @@ public class WordNet
 
         while (synsetsIn.hasNextLine())
         {
-            final String line = synsetsIn.readLine();
-            final String[] columns = line.split(",");
+            final String[] columns = synsetsIn.readLine().split(",");
             final int synsetId = Integer.parseInt(columns[0]);
             synsetIdList.add(synsetId, columns[1]);
             mapNounsToSynsetId(synsetId, columns[1]);
@@ -88,8 +85,9 @@ public class WordNet
         return merged;
     }
 
-    private void readHypernyms(final String hypernyms)
+    private Digraph readHypernyms(final int vertices, final String hypernyms)
     {
+        final Digraph digraph = new Digraph(vertices);
         final In hypernymsIn = new In(hypernyms);
         while (hypernymsIn.hasNextLine())
         {
@@ -100,9 +98,11 @@ public class WordNet
                 .map(Integer::parseInt)
                 .forEach(to -> digraph.addEdge(from, to));
         }
+
+        return digraph;
     }
 
-    private void validateSingleRoot()
+    private void validateSingleRoot(final Digraph digraph)
     {
         int roots = 0;
         for (int index = 0; index < digraph.V(); index++)
@@ -115,6 +115,14 @@ public class WordNet
             {
                 throw new IllegalArgumentException();
             }
+        }
+    }
+
+    private void validateAcyclic(final Digraph digraph)
+    {
+        if (new DirectedCycle(digraph).hasCycle())
+        {
+            throw new IllegalArgumentException();
         }
     }
 
