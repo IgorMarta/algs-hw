@@ -17,24 +17,24 @@ public class Solver
         }
 
         final Comparator<Node> manhattanPriorityOrder = Comparator.comparingInt(Node::getManhattanPriority);
-        final MinPQ<Node> initialBoardPQ = new MinPQ<>(manhattanPriorityOrder),
+        final MinPQ<Node> originalBoardPQ = new MinPQ<>(manhattanPriorityOrder),
             twinBoardPQ = new MinPQ<>(manhattanPriorityOrder);
 
-        initialBoardPQ.insert(new Node(board, 0, null));
+        originalBoardPQ.insert(new Node(board, 0, null));
         twinBoardPQ.insert(new Node(board.twin(), 0, null));
 
-        while (notSolved(initialBoardPQ, twinBoardPQ))
+        while (notSolved(originalBoardPQ.min(), twinBoardPQ.min()))
         {
-            insertNeighborsFor(initialBoardPQ);
+            insertNeighborsFor(originalBoardPQ);
             insertNeighborsFor(twinBoardPQ);
         }
 
-        solutionNode = initialBoardPQ.delMin();
+        solutionNode = originalBoardPQ.delMin();
     }
 
     public boolean isSolvable()
     {
-        return solutionNode.board.isGoal();
+        return isSolutionNode(solutionNode);
     }
 
     public int moves()
@@ -47,9 +47,14 @@ public class Solver
         return isSolvable() ? solutionIterable() : null;
     }
 
-    private boolean notSolved(final MinPQ<Node> initialBoardPQ, final MinPQ<Node> twinBoardPQ)
+    private boolean notSolved(final Node originalNode, final Node twinNode)
     {
-        return !initialBoardPQ.min().board.isGoal() && !twinBoardPQ.min().board.isGoal();
+        return !isSolutionNode(originalNode) && !isSolutionNode(twinNode);
+    }
+
+    private boolean isSolutionNode(final Node node)
+    {
+        return node.board.isGoal();
     }
 
     private void insertNeighborsFor(final MinPQ<Node> queue)

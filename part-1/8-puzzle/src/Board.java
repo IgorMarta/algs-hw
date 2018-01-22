@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Board
 {
@@ -116,26 +115,19 @@ public class Board
 
     public Iterable<Board> neighbors()
     {
-        final boolean[] configs =
+        final int[][] neighborCells =
             {
-                withinRange(blankRow - 1),
-                withinRange(blankCol - 1),
-                withinRange(blankRow + 1),
-                withinRange(blankCol + 1)
+                {blankRow - 1, blankCol},
+                {blankRow, blankCol - 1},
+                {blankRow + 1, blankCol},
+                {blankRow, blankCol + 1}
             };
-        final List<Board> boards = new ArrayList<>(4);
 
-        for (int i = 0; i < configs.length; i++)
-        {
-            if (configs[i])
-            {
-                final int[][] copy = getCopy();
-                setupNeighborBlocks(copy, i);
-                boards.add(new Board(copy));
-            }
-        }
-
-        return boards;
+        return Arrays.stream(neighborCells)
+            .filter(this::cellWithinRange)
+            .map(this::getBlocksForNeighbor)
+            .map(Board::new)
+            .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
 
     private int[][] getCopy()
@@ -145,24 +137,11 @@ public class Board
             .toArray(int[][]::new);
     }
 
-    private void setupNeighborBlocks(final int[][] copy, final int option)
+    private int[][] getBlocksForNeighbor(final int[] cell)
     {
-        if (option == 0)
-        {
-            swap(copy, blankRow, blankCol, blankRow - 1, blankCol);
-        }
-        if (option == 1)
-        {
-            swap(copy, blankRow, blankCol, blankRow, blankCol - 1);
-        }
-        if (option == 2)
-        {
-            swap(copy, blankRow, blankCol, blankRow + 1, blankCol);
-        }
-        if (option == 3)
-        {
-            swap(copy, blankRow, blankCol, blankRow, blankCol + 1);
-        }
+        final int[][] newBlocks = getCopy();
+        swap(newBlocks, blankRow, blankCol, cell[0], cell[1]);
+        return newBlocks;
     }
 
     private int get1DIndex(final int row, final int col)
@@ -177,6 +156,11 @@ public class Board
             goalCol = cell - goalRow * dimension();
 
         return Math.abs(goalRow - row) + Math.abs(goalCol - col);
+    }
+
+    private boolean cellWithinRange(final int[] cell)
+    {
+        return withinRange(cell[0]) && withinRange(cell[1]);
     }
 
     private boolean withinRange(final int index)
