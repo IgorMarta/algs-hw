@@ -85,14 +85,45 @@ public class BaseballElimination
 
     private boolean nonTrivialElimination(final DivisionRow divisionTeam)
     {
-        final FlowNetwork flowNetwork = initFlowNetworkFor(divisionTeam);
-
-        computeMaxFlow(divisionTeam, flowNetwork);
-
-        return isNonTriviallyEliminated(flowNetwork);
+        return Arrays.stream(divisionRows)
+            .mapToInt(row -> row.getId() + 1)
+            .anyMatch(computeMaxFlow(divisionTeam)::inCut);
     }
 
-    private FlowNetwork initFlowNetworkFor(final DivisionRow divisionTeam)
+    private List<String> getTrivialCertificate(final DivisionRow divisionTeam)
+    {
+        return Arrays.stream(divisionRows)
+            .filter(row -> isTriviallyEliminated(divisionTeam, row.getWins()))
+            .map(DivisionRow::getTeam)
+            .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+    }
+
+    private boolean isTriviallyEliminated(final DivisionRow divisionTeam, final int wins)
+    {
+        return divisionTeam.getWins() + divisionTeam.getRemaining() < wins;
+    }
+
+    private List<String> getNonTrivialCertificate(final DivisionRow divisionTeam)
+    {
+        return Optional.of(getInCutTeams(computeMaxFlow(divisionTeam)))
+            .filter(certificate -> !certificate.isEmpty())
+            .orElse(null);
+    }
+
+    private List<String> getInCutTeams(final FordFulkerson fordFulkerson)
+    {
+        return Arrays.stream(divisionRows)
+            .filter(row -> fordFulkerson.inCut(row.getId() + 1))
+            .map(DivisionRow::getTeam)
+            .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+    }
+
+    private FordFulkerson computeMaxFlow(final DivisionRow divisionTeam)
+    {
+        return new FordFulkerson(getFlowNetworkFor(divisionTeam), SOURCE_VERTEX, divisionTeam.getId() + 1);
+    }
+
+    private FlowNetwork getFlowNetworkFor(final DivisionRow divisionTeam)
     {
         final FlowNetwork flowNetwork = new FlowNetwork(getNumberOfVertices());
 
@@ -100,11 +131,6 @@ public class BaseballElimination
         addSinkEdges(divisionTeam, flowNetwork);
 
         return flowNetwork;
-    }
-
-    private FordFulkerson computeMaxFlow(final DivisionRow divisionTeam, final FlowNetwork flowNetwork)
-    {
-        return new FordFulkerson(flowNetwork, SOURCE_VERTEX, divisionTeam.getId() + 1);
     }
 
     private void addGameEdges(final DivisionRow divisionTeam, final FlowNetwork flowNetwork)
@@ -156,46 +182,6 @@ public class BaseballElimination
     private int nChoose2(final int n)
     {
         return (n - 1) * n / 2;
-    }
-
-    private List<String> getTrivialCertificate(final DivisionRow divisionTeam)
-    {
-        return Arrays.stream(divisionRows)
-            .filter(row -> isTriviallyEliminated(divisionTeam, row.getWins()))
-            .map(DivisionRow::getTeam)
-            .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-    }
-
-    private boolean isTriviallyEliminated(final DivisionRow divisionTeam, final int wins)
-    {
-        return divisionTeam.getWins() + divisionTeam.getRemaining() < wins;
-    }
-
-    private boolean isNonTriviallyEliminated(final FlowNetwork flowNetwork)
-    {
-        for (final FlowEdge edge : flowNetwork.adj(SOURCE_VERTEX))
-        {
-            if (edge.flow() < edge.capacity())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private List<String> getNonTrivialCertificate(final DivisionRow divisionTeam)
-    {
-        return Optional.of(getInCutTeams(computeMaxFlow(divisionTeam, initFlowNetworkFor(divisionTeam))))
-            .filter(certificate -> !certificate.isEmpty())
-            .orElse(null);
-    }
-
-    private List<String> getInCutTeams(final FordFulkerson fordFulkerson)
-    {
-        return Arrays.stream(divisionRows)
-            .filter(row -> fordFulkerson.inCut(row.getId() + 1))
-            .map(DivisionRow::getTeam)
-            .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
 
     private DivisionRow getTeam(final String team)

@@ -17,7 +17,7 @@ public final class DivisionRow
         this.wins = wins;
         this.losses = losses;
         this.remaining = remaining;
-        this.remainingAgainst = copyOf(remainingAgainst);
+        this.remainingAgainst = remainingAgainst;
     }
 
     public int getId()
@@ -46,11 +46,6 @@ public final class DivisionRow
     }
 
     public int[] getRemainingAgainst()
-    {
-        return copyOf(remainingAgainst);
-    }
-
-    private int[] copyOf(final int[] remainingAgainst)
     {
         return Arrays.copyOf(remainingAgainst, remainingAgainst.length);
     }
