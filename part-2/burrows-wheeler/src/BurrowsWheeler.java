@@ -9,14 +9,8 @@ public class BurrowsWheeler
     {
         final String inputString = BinaryStdIn.readString();
         final CircularSuffixArray suffixArray = new CircularSuffixArray(inputString);
-        int first = 0;
 
-        while (suffixArray.index(first) != 0)
-        {
-            first++;
-        }
-
-        BinaryStdOut.write(first);
+        BinaryStdOut.write(getFirst(suffixArray));
 
         for (int index = 0; index < suffixArray.length(); index++)
         {
@@ -24,6 +18,18 @@ public class BurrowsWheeler
         }
 
         BinaryStdOut.close();
+    }
+
+    private static int getFirst(final CircularSuffixArray suffixArray)
+    {
+        for (int first = 0; first < suffixArray.length(); first++)
+        {
+            if (suffixArray.index(first) == 0)
+            {
+                return first;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     private static int getIndex(final CircularSuffixArray suffixArray, final int index)
@@ -35,15 +41,9 @@ public class BurrowsWheeler
     {
         final int first = BinaryStdIn.readInt();
         final char[] input = BinaryStdIn.readString().toCharArray(), firstColumn = new char[input.length];
-        final int[] indexCount = countKeyIndices(input), next = new int[input.length];
+        final int[] next = new int[input.length];
 
-        for (int index = 0; index < input.length; index++)
-        {
-            final int charIndex = indexCount[input[index]];
-            firstColumn[charIndex] = input[index];
-            next[charIndex] = index;
-            indexCount[input[index]]++;
-        }
+        restoreFirstColumnAndNextIndices(input, firstColumn, next);
 
         for (int counter = 0, row = first; counter < firstColumn.length; counter++, row = next[row])
         {
@@ -53,7 +53,19 @@ public class BurrowsWheeler
         BinaryStdOut.close();
     }
 
-    private static int[] countKeyIndices(final char[] input)
+    private static void restoreFirstColumnAndNextIndices(final char[] input, final char[] firstColumn, final int[] next)
+    {
+        final int[] sortedIndices = getSortedIndices(input);
+        for (int index = 0; index < input.length; index++)
+        {
+            final int charIndex = sortedIndices[input[index]];
+            firstColumn[charIndex] = input[index];
+            next[charIndex] = index;
+            sortedIndices[input[index]]++;
+        }
+    }
+
+    private static int[] getSortedIndices(final char[] input)
     {
         final int[] count = new int[R + 1];
 

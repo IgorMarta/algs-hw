@@ -13,13 +13,7 @@ public class CircularSuffixArray
         }
 
         final char[] chars = s.toCharArray();
-        indexArray = new ArrayList<>(chars.length);
-
-        for (int index = 0; index < chars.length; index++)
-        {
-            indexArray.add(index);
-        }
-
+        indexArray = buildIndexArray(chars);
         indexArray.sort((lhs, rhs) -> compareSuffixes(chars, lhs, rhs));
     }
 
@@ -35,6 +29,17 @@ public class CircularSuffixArray
             throw new IllegalArgumentException();
         }
         return indexArray.get(i);
+    }
+
+    private List<Integer> buildIndexArray(final char[] chars)
+    {
+        final List<Integer> list = new ArrayList<>(chars.length);
+        for (int index = 0; index < chars.length; index++)
+        {
+            list.add(index);
+        }
+
+        return list;
     }
 
     private int compareSuffixes(final char[] chars, final int lhs, final int rhs)
