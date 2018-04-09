@@ -4,11 +4,9 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.hamcrest.Matchers.both;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
@@ -91,8 +89,7 @@ public class KdTreeTest
         Arrays.stream(pointsOutside)
             .forEach(kdTree::insert);
 
-        assertThat(kdTree.range(rect), both(hasItems(pointsInside))
-                .and(not(hasItems(pointsOutside))));
+        assertThat(kdTree.range(rect), containsInAnyOrder(pointsInside));
     }
 
     @Test(expected = IllegalArgumentException.class)

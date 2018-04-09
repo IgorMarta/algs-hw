@@ -1,7 +1,7 @@
 import edu.princeton.cs.algs4.In;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -17,15 +17,15 @@ public class BoggleSolverTest
         final BoggleSolver diagonal = new BoggleSolver(dictionary),
             algs4 = new BoggleSolver(readDictionary());
 
-        assertThat(diagonal.getAllValidWords(diagonalBoard), hasItems("THEN"));
+        assertThat(diagonal.getAllValidWords(diagonalBoard), contains("THEN"));
 
         assertThat(algs4.getAllValidWords(board4),
-            hasItems("PAT", "TAT", "PATE", "ONE", "YET", "EYE", "UNITE", "ENDS", "UNITED", "AID", "TYPE", "DIE", "SITE",
+            contains("PAT", "TAT", "PATE", "ONE", "YET", "EYE", "UNITE", "ENDS", "UNITED", "AID", "TYPE", "DIE", "SITE",
                 "UNIT", "USE", "TINY", "ONES", "PAID", "SINE", "SEND", "TIE", "SIDE", "TIED", "TIN", "SIN", "END",
                 "PAINS", "YOU", "SIT"));
 
         assertThat(algs4.getAllValidWords(boardQ),
-            hasItems("RES", "SER", "TIES", "TAT", "ONE", "EQUATIONS", "ITS", "STATE", "QUITE", "QUESTION", "TENS",
+            contains("RES", "SER", "TIES", "TAT", "ONE", "EQUATIONS", "ITS", "STATE", "QUITE", "QUESTION", "TENS",
                 "QUERIES", "LETS", "EQUATION", "REQUIRE", "SITE", "SINE", "QUESTIONS", "TIE", "REST", "SITS", "REQUEST",
                 "TIN", "SIN", "LET", "NET", "TEN", "SIT", "TRIES"));
     }

@@ -1,7 +1,7 @@
 import org.junit.Test;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -72,7 +72,7 @@ public class BoardTest
         final int[][] blocks = {{8, 1, 3}, {4, 0, 2}, {7, 6, 5}};
         final Board board = new Board(blocks);
 
-        assertThat(board.neighbors(), hasItems(
+        assertThat(board.neighbors(), containsInAnyOrder(
             new Board(new int[][]{{8, 1, 3}, {0, 4, 2}, {7, 6, 5}}),
             new Board(new int[][]{{8, 1, 3}, {4, 2, 0}, {7, 6, 5}}),
             new Board(new int[][]{{8, 1, 3}, {4, 6, 2}, {7, 0, 5}}),
@@ -81,14 +81,14 @@ public class BoardTest
         final int[][] blocks2 = {{8, 1, 3}, {4, 2, 5}, {7, 6, 0}};
         final Board board2 = new Board(blocks2);
 
-        assertThat(board2.neighbors(), hasItems(
+        assertThat(board2.neighbors(), containsInAnyOrder(
             new Board(new int[][]{{8, 1, 3}, {4, 2, 5}, {7, 0, 6}}),
             new Board(new int[][]{{8, 1, 3}, {4, 2, 0}, {7, 6, 5}})));
 
         final int[][] blocks3 = {{8, 1, 3}, {4, 6, 2}, {7, 0, 5}};
         final Board board3 = new Board(blocks3);
 
-        assertThat(board3.neighbors(), hasItems(
+        assertThat(board3.neighbors(), containsInAnyOrder(
             new Board(new int[][]{{8, 1, 3}, {4, 0, 2}, {7, 6, 5}}),
             new Board(new int[][]{{8, 1, 3}, {4, 6, 2}, {7, 5, 0}}),
             new Board(new int[][]{{8, 1, 3}, {4, 6, 2}, {0, 7, 5}})));

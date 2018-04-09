@@ -4,11 +4,9 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
@@ -91,8 +89,7 @@ public class PointSETTest
         Arrays.stream(pointsOutside)
             .forEach(pointSET::insert);
 
-        assertThat(pointSET.range(rect), both(containsInAnyOrder(pointsInside))
-                .and(not(containsInAnyOrder(pointsOutside))));
+        assertThat(pointSET.range(rect), containsInAnyOrder(pointsInside));
     }
 
     @Test(expected = IllegalArgumentException.class)

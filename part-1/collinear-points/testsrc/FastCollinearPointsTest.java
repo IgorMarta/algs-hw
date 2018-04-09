@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.util.Arrays.stream;
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -58,7 +58,7 @@ public class FastCollinearPointsTest
             .map(LineSegment::toString)
             .collect(Collectors.toList());
 
-        assertThat(lines, hasItems(
+        assertThat(lines, containsInAnyOrder(
             new LineSegment(p(1, 1), p(4, 4)).toString(),
             new LineSegment(p(-1, 1), p(-5, 5)).toString(),
             new LineSegment(p(0, 1), p(0, 4)).toString(),

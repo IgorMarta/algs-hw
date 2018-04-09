@@ -1,6 +1,6 @@
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -39,7 +39,7 @@ public class SolverTest
         final Board solvable = new Board(new int[][]{{0, 1, 3}, {4, 2, 5}, {7, 8, 6}});
         final Board unsolvable = new Board(new int[][]{{1, 2, 3}, {4, 5, 6}, {8, 7, 0}});
 
-        assertThat(new Solver(solvable).solution(), hasItems(
+        assertThat(new Solver(solvable).solution(), contains(
             new Board(new int[][]{{0, 1, 3}, {4, 2, 5}, {7, 8, 6}}),
             new Board(new int[][]{{1, 0, 3}, {4, 2, 5}, {7, 8, 6}}),
             new Board(new int[][]{{1, 2, 3}, {4, 0, 5}, {7, 8, 6}}),

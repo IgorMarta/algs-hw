@@ -1,6 +1,6 @@
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -19,10 +19,10 @@ public class BaseballEliminationTest
     @Test
     public void teams()
     {
-        assertThat(teams1().teams(), hasItems("Turing"));
-        assertThat(teams4().teams(), hasItems("Atlanta", "Philadelphia", "New_York", "Montreal"));
-        assertThat(teams5().teams(), hasItems("New_York", "Baltimore", "Boston", "Toronto", "Detroit"));
-        assertThat(teams10().teams(), hasItems("Atlanta", "Boston", "Chicago", "Cleveland", "Dallas",
+        assertThat(teams1().teams(), contains("Turing"));
+        assertThat(teams4().teams(), contains("Atlanta", "Philadelphia", "New_York", "Montreal"));
+        assertThat(teams5().teams(), contains("New_York", "Baltimore", "Boston", "Toronto", "Detroit"));
+        assertThat(teams10().teams(), contains("Atlanta", "Boston", "Chicago", "Cleveland", "Dallas",
             "Denver", "Detroit", "Golden_State", "Houston", "Indiana"));
     }
 
@@ -173,12 +173,12 @@ public class BaseballEliminationTest
     {
         final BaseballElimination teams4 = teams4(), teams5 = teams5();
 
-        assertThat(teams4.certificateOfElimination("Montreal"), hasItems("Atlanta"));
+        assertThat(teams4.certificateOfElimination("Montreal"), contains("Atlanta"));
         assertThat(teams4.certificateOfElimination("New_York"), nullValue());
         assertThat(teams4.certificateOfElimination("Atlanta"), nullValue());
-        assertThat(teams4.certificateOfElimination("Philadelphia"), hasItems("Atlanta", "New_York"));
+        assertThat(teams4.certificateOfElimination("Philadelphia"), contains("Atlanta", "New_York"));
 
-        assertThat(teams5.certificateOfElimination("Detroit"), hasItems("New_York", "Baltimore", "Boston", "Toronto"));
+        assertThat(teams5.certificateOfElimination("Detroit"), contains("New_York", "Baltimore", "Boston", "Toronto"));
         assertThat(teams5.certificateOfElimination("Toronto"), nullValue());
         assertThat(teams5.certificateOfElimination("Boston"), nullValue());
         assertThat(teams5.certificateOfElimination("New_York"), nullValue());
